@@ -2,9 +2,29 @@ const Category = require('../model/category');
 
 const getCategories = async (req, res) => {
     const id = req.params.id;
-    const categories = await Category.find({id : id});
-    res.send(categories);
-    return categories;
+    try {
+      const categories = await Category.find({_id : id});
+      res.send(categories);
+    } catch (error) {
+      console.error("Error creating category:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
+const getMappings = async (req, res) => {
+  let categories = {};
+  try{
+    const allCategories = await Category.find({} , "_id name");
+    console.log("got details of categories");
+    allCategories.forEach(category => {
+      categories[category.name] = category._id;
+    });
+  }catch(error){
+    console.log(error);
+  }
+  res.send(categories);
+  return categories;
 }
 
 
@@ -66,5 +86,6 @@ module.exports = {
     getCategories,
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getMappings
 };
