@@ -10,7 +10,7 @@ app.use(route);
 
 const startServer = async () => {
   let connection = await connectDB(); // Ensure DB connection before starting the server
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 6900;
   app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
 };
 

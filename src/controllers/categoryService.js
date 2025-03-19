@@ -11,7 +11,6 @@ const getCategories = async (req, res) => {
 const createCategory = async (req, res) => {
     let  {name , parentId} = req.body;
     if (!name) return res.status(400).json({ error: "Category name is required" });
-
     const categoryWithName = await Category.findOne({name});
     if(categoryWithName) return res.status(400).json({ error: `Category with name ${name} already exists` });
     const newCategory = new Category({ name , parentId });
