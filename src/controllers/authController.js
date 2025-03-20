@@ -4,7 +4,8 @@ const { validationResult } = require("express-validator");
 
 const users = [
   { username: "admin", password: bcrypt.hashSync("admin123", 10) },
-  { username: "gourav", password: bcrypt.hashSync("grv123", 10) }
+  { username: "gourav", password: bcrypt.hashSync("grv123", 10) },
+  { username: "testuser", password: bcrypt.hashSync("test123", 10) }
 ];
 
 

@@ -4,12 +4,14 @@
   "description": "app for creating categories ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx mocha test -timeout 10000"
   },
   "author": "Gourav Malviya",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-validator": "^7.2.1",
