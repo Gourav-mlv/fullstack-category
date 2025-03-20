@@ -68,14 +68,16 @@ const CategoryTree = () => {
     }
   };
 
-  const handleUpdate = async () => {
-    if (!editCategory || !editName.trim()) return;
-
-    await updateCategory(editCategory._id, editName, editParent);
-    fetchCategories();
-    setEditCategory(null);
-    setEditName("");
-    setEditParent(null);
+  const handleUpdate = async (id, newName, parentId) => {
+    if (!id || !newName.trim()) return;
+  
+    await updateCategory(id, newName, parentId);
+    setCategories((prevCategories) =>
+      prevCategories.map((category) =>
+        category._id === id ? { ...category, name: newName } : category
+      )
+    );
+    await fetchCategories();
   };
 
   const handleEditClick = (category) => {
@@ -165,7 +167,7 @@ const CategoryTree = () => {
           <TreeNode
             key={category._id}
             node={category}
-            handleEdit={handleEditClick}
+            handleUpdate={handleUpdate}  // Pass down handleUpdate
             handleDelete={handleDelete}
           />
         ))}

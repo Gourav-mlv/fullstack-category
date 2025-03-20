@@ -2,7 +2,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const { app,  server } = require("../index");
 const expect = chai.expect;
-
+const logger = require('../config/log').getLogger('CategoryTest');
 chai.use(chaiHttp);
 
 let token = ""; // Store JWT token

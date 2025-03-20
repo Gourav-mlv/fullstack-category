@@ -2,7 +2,7 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const { app, server } = require("../index");
 const expect = chai.expect;
-
+const logger = require('../config/log').getLogger('AuthTest');
 chai.use(chaiHttp);
 
 let token = ""; // Store JWT token
@@ -16,7 +16,7 @@ describe(" LOGIN API TESTS", function () {
         try {
             if (!server?.address()) {
                 await server.listen(process.env.PORT || 6900);
-                console.log("✅ server started for tests...");
+                logger.info("✅ server started for tests...");
             }
 
             const res = await chai.request(server)
@@ -25,9 +25,9 @@ describe(" LOGIN API TESTS", function () {
             expect(res).to.have.status(200);
             expect(res.body).to.have.property("token");
             token = res.body.token;
-            console.log("✅ Authenticated successfully!");
+            logger.info("✅ Authenticated successfully!");
         } catch (err) {
-            console.error("❌ Error in before hook:", err.message);
+            logger.error("❌ Error in before hook:", err.message);
             throw err;
         }
     });
@@ -78,7 +78,7 @@ describe(" LOGIN API TESTS", function () {
     });
     // Cleanup: Close the server after tests
     after(async function () {
-        console.log("🛑 Closing server and database...");
+        logger.info("🛑 Closing server and database...");
         await server?.close();
     });
 });
