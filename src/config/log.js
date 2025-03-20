@@ -1,16 +1,16 @@
-const winston = require("winston");
+const log4js = require("log4js");
 
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: "logs/error.log", level: "error" }),
-    new winston.transports.File({ filename: "logs/combined.log" })
-  ],
+log4js.configure({
+  appenders: {
+    console: { type: "console" }, // Logs to console
+    errorFile: { type: "file", filename: "logs/error.log", level: "error" }, // Logs only errors
+    combinedFile: { type: "file", filename: "logs/combined.log" }, // Logs all levels
+    rollingFile: { type: "dateFile", filename: "logs/app.log", pattern: ".yyyy-MM-dd", compress: true } // Optional: Rotates daily
+  },
+  categories: {
+    default: { appenders: ["console", "combinedFile"], level: "info" },
+    error: { appenders: ["errorFile"], level: "error" },
+  },
 });
 
-module.exports = logger;
+module.exports = log4js;

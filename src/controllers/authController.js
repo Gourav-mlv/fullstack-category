@@ -1,7 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { validationResult } = require("express-validator");
-
+const logger = require('../config/log').getLogger('AuthController');
 const users = [
   { username: "admin", password: bcrypt.hashSync("admin123", 10) },
   { username: "gourav", password: bcrypt.hashSync("grv123", 10) },
@@ -26,10 +25,6 @@ exports.login = async (req, res) => {
 
     // Generate JWT Token
     const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    // Get all categories
-    
-   
-    //TODO along with token , send the information about all the id and name of all the categories
     res.json({ token });
   } catch (error) {
     res.status(500).json({ error: error.message });

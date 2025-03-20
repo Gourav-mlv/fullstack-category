@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-/**
- * Connect to the MongoDB database.
- * @returns {Promise<mongoose.Connection>} - The MongoDB connection object.
- */
+const logger = require('./log').getLogger('Config/DB');
+// Establishes a connection to the MongoDB database.
 const connectDB = async () => {
   try {
     const connection = await mongoose.connect(process.env.MONGO_URI, {
@@ -12,7 +10,7 @@ const connectDB = async () => {
     });
     return connection.connection;
   } catch (error) {
-    console.error("Failed to connect to MongoDB:", error);
+    logger.error("Failed to connect to MongoDB:", error);
     process.exit(1);
   }
 };

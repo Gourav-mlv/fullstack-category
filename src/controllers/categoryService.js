@@ -1,5 +1,5 @@
 const Category = require('../model/category');
-
+const logger = require('../config/log').getLogger('CategoryService');
 const getCategories = async (req, res) => {
     const id = req.params.id;
     try {
@@ -8,7 +8,7 @@ const getCategories = async (req, res) => {
       else categories = await Category.find({_id : id});
       res.send(categories);
     } catch (error) {
-      console.error("Error creating category:", error);
+      logger.error("Error creating category:", error);
       res.status(500).json({ error: "Internal Server Error" });
   }
 }
@@ -18,12 +18,12 @@ const getMappings = async (req, res) => {
   let categories = {};
   try{
     const allCategories = await Category.find({} , "_id name");
-    console.log("got details of categories");
+    logger.info("got details of categories");
     allCategories.forEach(category => {
       categories[category.name] = category._id;
     });
   }catch(error){
-    console.log(error);
+    logger.info(error);
   }
   res.send(categories);
   return categories;
@@ -36,18 +36,18 @@ const createCategory = async (req, res) => {
     const newCategory = new Category({ name , parentId });
     try {
         const savedCategory = await newCategory.save();
-        console.log("Category Created:", savedCategory);
+        logger.info("Category Created:", savedCategory);
         if (parentId) {
           await Category.findByIdAndUpdate(
               parentId,
               { $push: { children: savedCategory._id } },  // Add new category ID to parent's children array
               { new: true }
           );
-          console.log(`✅ Added ${savedCategory._id} to parent ${parentId}`);
+          logger.info(`Added ${savedCategory._id} to parent ${parentId}`);
       }
       res.status(200).json(savedCategory);
     } catch (error) {
-        console.error("Error creating category:", error);
+        logger.error("Error creating category:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
   };
@@ -63,11 +63,11 @@ const updateCategory = async (req, res) => {
 
     await Category.findOneAndUpdate(filter, update, {new: true})
       .then((updatedCategory) => {
-        console.log("Category Updated:", updatedCategory);
+        logger.info("Category Updated:", updatedCategory);
         res.status(200).json(updatedCategory);
       })
       .catch((error) => {
-        console.error("Error updating category:", error);
+        logger.error("Error updating category:", error);
         res.status(500).json({ error: "Internal Server Error" });
       });
   };
@@ -81,10 +81,15 @@ const deleteCategory = async (req, res) => {
     if (!category) return res.status(404).json({ error: "Category not found" , message : "Category not found" });
     const childrenIds = category.children?.map(child => child._id) || [];
     await Category.updateMany({children : id}, {$pull: {children: id}});
+    logger.info("Updated categories to remove this category from their children");
     await Category.deleteMany({ _id: { $in: [id, ...childrenIds] } })
+      .then(() => {
+        logger.info("Deleted category and its children");
+        res.send({message :"Category and its children deleted"});
+      })
       .then(() => res.send({message :"Category and its children deleted"}))
       .catch((error) => {
-        console.error("Error deleting category and its children:", error);
+        logger.error("Error deleting category and its children:", error);
         res.status(404).json({ error: "Internal Server Error"  });
       });
 }
