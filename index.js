@@ -9,7 +9,13 @@ app.use(express.json());
 app.use(route);
 app.use(authRoute);
 
+const path = require("path");
 
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get("/app", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
 
  // Ensure DB connection before starting the server
 

@@ -11,6 +11,7 @@ exports.authenticate = (req, res, next) => {
     req.user = decoded.username;
     next();
   } catch (error) {
+    console.error("Error verifying token:", error);
     res.status(400).json({ message: "Invalid token" });
   }
 };

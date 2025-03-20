@@ -37,7 +37,15 @@ const createCategory = async (req, res) => {
     try {
         const savedCategory = await newCategory.save();
         console.log("Category Created:", savedCategory);
-        res.status(200).json(savedCategory);
+        if (parentId) {
+          await Category.findByIdAndUpdate(
+              parentId,
+              { $push: { children: savedCategory._id } },  // Add new category ID to parent's children array
+              { new: true }
+          );
+          console.log(`✅ Added ${savedCategory._id} to parent ${parentId}`);
+      }
+      res.status(200).json(savedCategory);
     } catch (error) {
         console.error("Error creating category:", error);
         res.status(500).json({ error: "Internal Server Error" });
